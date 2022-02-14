@@ -55,7 +55,7 @@ public:
         string meaning;
         while (true)
         {
-            cout << "^C to exit else continue: " << endl;
+            cout << "Enter Word to add in dictionary else enter ^C to stop creation" << endl;
             cin >> value;
             if (value.compare("^C") == 0)
             {
@@ -98,7 +98,7 @@ public:
         if (p)
         {
             reverseInorder(p->rchild);
-            cout << p->value << " ";
+            cout << p->value << ": " << p->meaning << endl;
             reverseInorder(p->lchild);
         }
     }
@@ -142,8 +142,32 @@ public:
             }
         }
     }
-    // Node* Replace(Node* p, string key){
-    // }
+    void Replace(Node *p, string key)
+    {
+        if (p)
+        {
+            auto x = p->value.compare(key);
+            if (x == 0)
+            {
+                cout << "KEY FOUND" << endl;
+                cout << "Current Meaning: " << p->meaning << endl;
+                cout << "Enter New Meaning: ";
+                string meaning;
+                cin >> meaning;
+                p->meaning = meaning;
+                isFound = true;
+                return;
+            }
+            else if (x < 0)
+            {
+                Replace(p->rchild, key);
+            }
+            else
+            {
+                Replace(p->lchild, key);
+            }
+        }
+    }
     void Find()
     {
         cout << "Enter the key to search: ";
@@ -164,10 +188,81 @@ public:
         string key;
         cin >> key;
         isFound = false;
-        Search(root, key);
+        Replace(root, key);
         if (!isFound)
         {
             cout << "NO KEY FOUND" << endl;
+        }
+    }
+
+    Node *Delete(Node *p, string key)
+    {
+        if (p == nullptr)
+            return p;
+
+        if (key.compare(p->value) < 0)
+            p->lchild = Delete(p->lchild, key);
+
+        else if (key.compare(p->value) > 0)
+            p->rchild = Delete(p->rchild, key);
+
+        else if (key.compare(p->value) == 0)
+        {
+            if (p->lchild == nullptr && p->rchild == nullptr)
+            {
+                return nullptr;
+            }
+            else if (p->lchild == nullptr)
+            {
+                auto temp = p->rchild;
+                delete p;
+                return temp;
+            }
+            else if (p->rchild == nullptr)
+            {
+                auto temp = p->lchild;
+                delete p;
+                return temp;
+            }
+            else if (p->lchild != nullptr && p->rchild != nullptr)
+            {
+                auto temp = minLeftChildNotNull(p->rchild);
+                p->value = temp->value;
+                p->meaning = temp->meaning;
+                p->rchild = Delete(p->rchild, temp->value);
+            }
+            return p;
+        }
+        return nullptr;
+    }
+
+    Node *minLeftChildNotNull(Node *p)
+    {
+        Node *curr = p;
+        while (curr && curr->lchild != nullptr)
+        {
+            curr = curr->lchild;
+        }
+        return curr;
+    }
+
+    void DeleteNode()
+    {
+        cout << "Enter the key to Deleted: ";
+        string key;
+        cin >> key;
+        isFound = false;
+        comp = 0;
+        Search1(root, key);
+        if (!isFound)
+        {
+            cout << "NO KEY FOUND" << endl;
+            cout << "No of comparisons: " << comp << endl;
+        }
+        else
+        {
+            Delete(root, key);
+            cout << "Deleting Word Successful" << endl;
         }
     }
 };
@@ -175,8 +270,94 @@ public:
 int main()
 {
     BST t1;
+    cout << "BST DICTIONARY CREATION" << endl;
     t1.Create();
-    t1.Display();
-    t1.Find();
+    cout << endl;
+    cout << endl;
+
+    char continueProgram = true;
+    while (continueProgram)
+    {
+        cout << "Menu" << endl;
+        cout << "1. Inorder traversal" << endl;
+        cout << "2. Search Word" << endl;
+        cout << "3. Update Meaning" << endl;
+        cout << "4. Delete Word" << endl;
+        cout << "5. Reverse Sort" << endl;
+        cout << "-1 End" << endl;
+        cout << "Choose operations u want to perform? ";
+        int choice = 0;
+        cin >> choice;
+        cout << endl;
+
+        switch (choice)
+        {
+        case 1:
+        {
+            if (t1.root != nullptr)
+            {
+                t1.Display();
+                cout << endl;
+                cout << endl;
+            }
+            break;
+        }
+        case 2:
+        {
+            if (t1.root != nullptr)
+            {
+                cout << "Searching Word" << endl;
+                t1.Find();
+                cout << endl;
+                cout << endl;
+            }
+            break;
+        }
+        case 3:
+        {
+            if (t1.root != nullptr)
+            {
+                cout << "Updatating Meaning" << endl;
+                t1.Update();
+                cout << endl;
+                cout << endl;
+            }
+            break;
+        }
+        case 4:
+        {
+            if (t1.root != nullptr)
+            {
+                cout << "Deleting Word" << endl;
+                t1.DeleteNode();
+                cout << endl;
+                cout << endl;
+            }
+            break;
+        }
+        case 5:
+        {
+            if (t1.root != nullptr)
+            {
+                cout << "DECENDING ORDER" << endl;
+                t1.reverseInorder(t1.root);
+                cout << endl;
+                cout << endl;
+            }
+            break;
+        }
+        case -1:
+        {
+            continueProgram = false;
+            break;
+        }
+        default:
+        {
+            cout << "INVALID CHOICE" << endl;
+            break;
+        }
+            cout << endl;
+        }
+    }
     return 0;
 }
