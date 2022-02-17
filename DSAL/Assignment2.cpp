@@ -200,46 +200,45 @@ public:
         if (p == nullptr)
             return p;
 
-        if (key.compare(p->value) < 0)
+        else if (key.compare(p->value) < 0)
             p->lchild = Delete(p->lchild, key);
 
         else if (key.compare(p->value) > 0)
             p->rchild = Delete(p->rchild, key);
 
-        else if (key.compare(p->value) == 0)
+        // else if (key.compare(root->value) == 0)
+        else
         {
-            if (p->lchild == nullptr && p->rchild == nullptr)
-            {
-                return nullptr;
-            }
-            else if (p->lchild == nullptr)
+            // Case 2: Root has 1 child where left is null
+            if (p->lchild == nullptr)
             {
                 auto temp = p->rchild;
                 delete p;
                 return temp;
             }
+            // Case 2: Root has 1 child where right is null
             else if (p->rchild == nullptr)
             {
                 auto temp = p->lchild;
                 delete p;
                 return temp;
             }
+            // Case 3: Root has 2 children
             else if (p->lchild != nullptr && p->rchild != nullptr)
             {
                 auto temp = minLeftChildNotNull(p->rchild);
                 p->value = temp->value;
                 p->meaning = temp->meaning;
-                p->rchild = Delete(p->rchild, temp->value);
+                p->rchild = Delete(p->rchild, p->value);
             }
-            return p;
         }
-        return nullptr;
+        return p;
     }
 
     Node *minLeftChildNotNull(Node *p)
     {
         Node *curr = p;
-        while (curr && curr->lchild != nullptr)
+        while (curr->lchild != nullptr)
         {
             curr = curr->lchild;
         }
