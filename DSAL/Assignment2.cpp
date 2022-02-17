@@ -153,7 +153,8 @@ public:
                 cout << "Current Meaning: " << p->meaning << endl;
                 cout << "Enter New Meaning: ";
                 string meaning;
-                cin >> meaning;
+                cin.ignore();
+                getline(cin, meaning);
                 p->meaning = meaning;
                 isFound = true;
                 return;
@@ -274,7 +275,7 @@ int main()
     cout << endl;
     cout << endl;
 
-    char continueProgram = true;
+    bool continueProgram = true;
     while (continueProgram)
     {
         cout << "Menu" << endl;
