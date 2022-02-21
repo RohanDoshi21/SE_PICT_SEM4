@@ -136,11 +136,36 @@ public:
             }
         }
     }
+    void inorder()
+    {
+        TBTNode *temp = header;
+        while (true)
+        {
+            temp = inorderSuccessor(temp);
+            if (temp == header)
+                return;
+
+            cout << temp->data << " ";
+        }
+    }
+    TBTNode *inorderSuccessor(TBTNode *x)
+    {
+        auto successor = x->rchild;
+        if (x->rbit == 1)
+        {
+            while (successor->lbit == 1)
+            {
+                successor = successor->lchild;
+            }
+        }
+        return successor;
+    }
 };
 
 int main()
 {
     TBT t1;
     t1.Create();
+    t1.inorder();
     return 0;
 }
