@@ -136,7 +136,7 @@ public:
             }
         }
     }
-    void inorder()
+    void Inorder()
     {
         TBTNode *temp = header;
         while (true)
@@ -160,12 +160,83 @@ public:
         }
         return successor;
     }
+    void Preorder()
+    {
+        TBTNode *temp = header;
+        temp = temp->lchild; //go to root node
+        do
+        {
+            cout << temp->data << " ";
+            if (temp->lbit == 1)
+            {
+                temp = temp->lchild;
+            }
+            else if (temp->rbit == 1)
+            {
+                temp = temp->rchild;
+            }
+            else
+            {
+                while (temp->rbit != 1)
+                {
+                    temp = temp->rchild;
+                }
+                temp = temp->rchild;
+            }
+        } while (temp != header);
+    }
 };
 
 int main()
 {
     TBT t1;
+    cout << "BST DICTIONARY CREATION" << endl;
     t1.Create();
-    t1.inorder();
+    cout << endl;
+    cout << endl;
+
+    bool continueProgram = true;
+    while (continueProgram)
+    {
+        cout << "Menu" << endl;
+        cout << "1. Inorder traversal" << endl;
+        cout << "2. Preorder traversal" << endl;
+        cout << "-1 End" << endl;
+        cout << "Choose operations u want to perform? ";
+        int choice = 0;
+        cin >> choice;
+        cout << endl;
+
+        switch (choice)
+        {
+        case 1:
+        {
+            cout << "Inorder Traversal: ";
+            t1.Inorder();
+            cout << endl;
+            cout << endl;
+            break;
+        }
+        case 2:
+        {
+            cout << "Preorder Traversal: ";
+            t1.Preorder();
+            cout << endl;
+            cout << endl;
+            break;
+        }
+        case -1:
+        {
+            continueProgram = false;
+            break;
+        }
+        default:
+        {
+            cout << "INVALID CHOICE" << endl;
+            break;
+        }
+            cout << endl;
+        }
+    }
     return 0;
 }
