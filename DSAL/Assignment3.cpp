@@ -185,6 +185,24 @@ public:
             }
         } while (temp != header);
     }
+    TBTNode *Search(string data)
+    {
+        TBTNode *temp = header;
+        while (true)
+        {
+            temp = inorderSuccessor(temp);
+            if (temp == header)
+            {
+                cout << "NOT FOUND" << endl;
+                return nullptr;
+            }
+            else if (temp->data == data)
+            {
+                cout << "FOUND " << data << endl;
+                return temp;
+            }
+        }
+    }
 };
 
 int main()
@@ -201,6 +219,8 @@ int main()
         cout << "Menu" << endl;
         cout << "1. Inorder traversal" << endl;
         cout << "2. Preorder traversal" << endl;
+        cout << "3. Search Element" << endl;
+        cout << "4. Delete Element" << endl;
         cout << "-1 End" << endl;
         cout << "Choose operations u want to perform? ";
         int choice = 0;
@@ -223,6 +243,14 @@ int main()
             t1.Preorder();
             cout << endl;
             cout << endl;
+            break;
+        }
+        case 3:
+        {
+            string key;
+            cout << "Enter Element to be Searched: ";
+            cin >> key;
+            t1.Search(key);
             break;
         }
         case -1:
