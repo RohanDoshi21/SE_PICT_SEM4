@@ -203,6 +203,38 @@ public:
             }
         }
     }
+    void Delete()
+    {
+        bool flag = 0;
+        auto parent = header;
+        auto T = header->lchild;
+        while (flag != 1)
+        {
+            // Case Delete Leaf Node T->rbit == 0 && T->lbit == 0
+            // Leaf node is rchild
+            if (T == parent->rchild)
+            {
+                parent->rchild = T->rchild;
+                parent->rbit = 0;
+                delete T;
+                flag = 1;
+            }
+            // Leaf Node is lchild
+            else if (T == parent->lchild)
+            {
+                parent->lchild = T->lchild;
+                parent->lbit = 0;
+                delete T;
+                flag = 1;
+            }
+            // Case with Left Child only
+            if (T->lbit == 1 && T->rbit == 0)
+            {
+                parent->rchild = T->lchild;
+                // T's (predecessor)->rchild = T->child 
+            }
+        }
+    }
 };
 
 int main()
@@ -251,6 +283,22 @@ int main()
             cout << "Enter Element to be Searched: ";
             cin >> key;
             t1.Search(key);
+            break;
+        }
+        case 4:
+        {
+            string key;
+            cout << "Enter the element you want to Delete: ";
+            cin >> key;
+            auto result = t1.Search(key);
+            if (result != nullptr)
+            {
+                t1.Delete();
+            }
+            else
+            {
+                cout << "Cannot Delete element which does not exist";
+            }
             break;
         }
         case -1:
