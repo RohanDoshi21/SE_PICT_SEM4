@@ -34,7 +34,7 @@ mov rsi, str1
 mov rdx, len1
 syscall
 
-add bl,0x30
+add bl,0x30           ; Convert hex to decimal to display
 mov [result], bl
 mov rax, 1
 mov rdi, 1
