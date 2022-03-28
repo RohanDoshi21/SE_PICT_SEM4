@@ -5,210 +5,314 @@
 
 #include <iostream>
 using namespace std;
-#define size 500
 
-class HashEntry {
-	long int telephoneNo;
-	string name;
+class TBTNode
+{
+    string data;
+    bool lbit;
+    bool rbit;
+    TBTNode *lchild;
+    TBTNode *rchild;
+
 public:
-	explicit HashEntry(long int telephoneNo = 0, string name = "") :
-			telephoneNo(telephoneNo), name(name) {
-	}
-	friend class HashTable;
+    TBTNode(string data = "") : data(data)
+    {
+        lbit = 0;
+        rbit = 0;
+        lchild = nullptr;
+        rchild = nullptr;
+    }
+    friend class TBT;
 };
 
-class HashTable {
-	HashEntry hashArray[size];
-	int elements;
-	int hashFunction(long int key) {
-		return key % size;
-	}
+class Queue
+{
+private:
+    class QNode
+    {
+        TBTNode *data;
+        QNode *next;
+
+    public:
+        QNode(TBTNode *data = nullptr, QNode *next = nullptr) : data(data), next(next){};
+        friend class Queue;
+    };
+    QNode *front;
+    QNode *rear;
+
 public:
-	HashTable() {
-		elements = 0;
-	}
-	void Insert(long int key, string value) {
-		if (elements == size) {
-			cout << "Hash Table FULL" << endl;
-			return;
-		}
-		int hashIndex = hashFunction(key);
-		int hashIndexCopy = hashIndex;
-		do {
-			if (hashArray[hashIndex].telephoneNo == 0) {
-				hashArray[hashIndex].telephoneNo = key;
-				hashArray[hashIndex].name = value;
-				elements++;
-				break;
-			}
-
-			hashIndex = (hashIndex + 1) % size;
-
-		} while (hashIndex != hashIndexCopy);
-	}
-
-	void InsertWithReplacement(long int key, string value) {
-		if (elements == size) {
-			cout << "Hash Table FULL" << endl;
-			return;
-		}
-		int hashIndex = hashFunction(key);
-		int hashIndexCopy = hashIndex;
-
-		do {
-			if (hashArray[hashIndex].telephoneNo == 0) {
-				hashArray[hashIndex].telephoneNo = key;
-				hashArray[hashIndex].name = value;
-				elements++;
-				break;
-			} else {
-				int hashIndexOfCollision = hashFunction(
-						hashArray[hashIndex].telephoneNo);
-				if (hashIndex != hashIndexOfCollision
-						&& hashIndex == hashIndexCopy) {
-					long int keyCollision = hashArray[hashIndex].telephoneNo;
-					string valueCollsion = hashArray[hashIndex].name;
-
-					hashArray[hashIndex].telephoneNo = key;
-					hashArray[hashIndex].name = value;
-
-					InsertWithReplacement(keyCollision, valueCollsion);
-
-					break;
-				} else {
-					hashIndex = (hashIndex + 1) % size;
-				}
-			}
-		} while (hashIndex != hashIndexCopy);
-
-	}
-
-	void Display() {
-		for (int i = 0; i < size; i++) {
-			if (hashArray[i].telephoneNo != 0) {
-				cout << i << "\t" << hashArray[i].telephoneNo << "\t"
-						<< hashArray[i].name << endl;
-			}
-		}
-	}
-	void Search(long int key) {
-		int count = 0;
-		int hashIndex = hashFunction(key);
-		int hashIndexCopy = hashIndex;
-		do {
-			if (hashArray[hashIndex].telephoneNo == key) {
-				cout << "Found" << endl;
-				cout << hashIndex << " " << hashArray[hashIndex].name << " "
-						<< hashArray[hashIndex].telephoneNo << " Collisions: "
-						<< count << endl;
-				return;
-			}
-			hashIndex = (hashIndex + 1) % size;
-			count++;
-
-		} while (hashIndex != hashIndexCopy);
-
-		cout << "Key NOT FOUND!" << endl;
-	}
-	void Update(long int key) {
-		int hashIndex = hashFunction(key);
-		int hashIndexCopy = hashIndex;
-		do {
-			if (hashArray[hashIndex].telephoneNo == key) {
-				cout << "Found" << endl;
-				cout << hashIndex << " " << hashArray[hashIndex].name << " "
-						<< hashArray[hashIndex].telephoneNo << endl;
-				cout << "Enter Name to be Updated: ";
-				string nameUpdate;
-				getline(cin, nameUpdate);
-				hashArray[hashIndex].name = nameUpdate;
-				cout << "Entry Updated" << endl;
-				cout << hashIndex << " " << hashArray[hashIndex].telephoneNo
-						<< " " << hashArray[hashIndex].name << endl;
-				return;
-			}
-			hashIndex = (hashIndex + 1) % size;
-
-		} while (hashIndex != hashIndexCopy);
-
-		cout << "Key NOT FOUND!" << endl;
-	}
+    Queue() : front(nullptr), rear(nullptr){};
+    void enqueue(TBTNode *data)
+    {
+        QNode *temp = new QNode(data);
+        if (front == nullptr)
+        {
+            front = rear = temp;
+        }
+        else
+        {
+            rear->next = temp;
+            rear = temp;
+        }
+    }
+    TBTNode *dequeue()
+    {
+        if (front == nullptr)
+        {
+            cout << "Queue is empty" << endl;
+            return nullptr;
+        }
+        else
+        {
+            QNode *temp = front;
+            front = front->next;
+            TBTNode *x = temp->data;
+            delete temp;
+            return x;
+        }
+    }
+    bool isEmpty()
+    {
+        return front == nullptr;
+    }
 };
 
-int main() {
-	HashTable t1;
-	bool continueProgram = true;
-	while (continueProgram) {
-		cout << "Menu" << endl;
-		cout << "1. Add Hash entry" << endl;
-		cout << "2. Add Hash entry with replacement" << endl;
-		cout << "3. Search Key" << endl;
-		cout << "4. Update Value" << endl;
-		cout << "5. Display" << endl;
-		cout << "-1 End" << endl;
-		cout << "Choose operations u want to perform? ";
-		int choice = 0;
-		cin >> choice;
-		cout << endl;
+class TBT
+{
+    TBTNode *header;
 
-		switch (choice) {
-		case 1: {
-			cout << "Enter key: ";
-			long int key;
-			cin >> key;
-			cout << "Enter value: ";
-			string value = "";
-			cin.ignore();
-			cin.clear();
-			getline(cin, value);
-			t1.Insert(key, value);
-			cout << endl;
-			break;
-		}
-		case 2: {
-			cout << "Enter key: ";
-			long int key;
-			cin >> key;
-			cout << "Enter value: ";
-			string value = "";
-			cin.ignore();
-			cin.clear();
-			getline(cin, value);
-			t1.InsertWithReplacement(key, value);
-			cout << endl;
-			break;
-		}
-		case 3: {
-			cout << "Enter key: ";
-			long int key;
-			cin >> key;
-			t1.Search(key);
-			break;
-		}
-		case 4: {
-			cout << "Enter key: ";
-			long int key;
-			cin >> key;
-			t1.Update(key);
-			cout << endl;
-			break;
-		}
-		case 5: {
-			cout << "Index\tKey\tValue\n";
-			t1.Display();
-			cout << endl;
-			break;
-		}
-		case -1: {
-			continueProgram = false;
-			break;
-		}
-		default: {
-			cout << "INVALID CHOICE" << endl;
-			break;
-		}
-			cout << endl;
-		}
-	}
-	return 0;
+public:
+    TBT()
+    {
+        header = new TBTNode();
+        header->lchild = header;
+        header->rchild = header;
+        header->rbit = 1;
+    }
+    void insertLeft(TBTNode *parent, TBTNode *child)
+    {
+        child->lchild = parent->lchild;
+        child->rchild = parent;
+        parent->lchild = child;
+        parent->lbit = 1;
+    }
+    void insertRight(TBTNode *parent, TBTNode *child)
+    {
+        child->rchild = parent->rchild;
+        child->lchild = parent;
+        parent->rchild = child;
+        parent->rbit = 1;
+    }
+    void Create()
+    {
+        string data;
+        cout << "Enter Data for root Node: ";
+        cin >> data;
+        auto root = new TBTNode();
+        root->data = data;
+        insertLeft(header, root);
+        Queue q;
+        q.enqueue(root);
+        while (!q.isEmpty())
+        {
+            auto p = q.dequeue();
+
+            cout << "Enter left child data of " << p->data << ": ";
+            cin >> data;
+            if (data.compare("-") != 0)
+            {
+                auto child = new TBTNode(data);
+                insertLeft(p, child);
+                q.enqueue(child);
+            }
+
+            cout << "Enter right child data of " << p->data << ": ";
+            cin >> data;
+            if (data.compare("-") != 0)
+            {
+                auto child = new TBTNode(data);
+                insertRight(p, child);
+                q.enqueue(child);
+            }
+        }
+    }
+    void Inorder()
+    {
+        TBTNode *temp = header;
+        while (true)
+        {
+            temp = inorderSuccessor(temp);
+            if (temp == header)
+                return;
+
+            cout << temp->data << " ";
+        }
+    }
+    TBTNode *inorderSuccessor(TBTNode *x)
+    {
+        auto successor = x->rchild;
+        if (x->rbit == 1)
+        {
+            while (successor->lbit == 1)
+            {
+                successor = successor->lchild;
+            }
+        }
+        return successor;
+    }
+    void Preorder()
+    {
+        TBTNode *temp = header;
+        temp = temp->lchild; //go to root node
+        do
+        {
+            cout << temp->data << " ";
+            if (temp->lbit == 1)
+            {
+                temp = temp->lchild;
+            }
+            else if (temp->rbit == 1)
+            {
+                temp = temp->rchild;
+            }
+            else
+            {
+                while (temp->rbit != 1)
+                {
+                    temp = temp->rchild;
+                }
+                temp = temp->rchild;
+            }
+        } while (temp != header);
+    }
+    TBTNode *Search(string data)
+    {
+        TBTNode *temp = header;
+        while (true)
+        {
+            temp = inorderSuccessor(temp);
+            if (temp == header)
+            {
+                cout << "NOT FOUND" << endl;
+                return nullptr;
+            }
+            else if (temp->data == data)
+            {
+                cout << "FOUND " << data << endl;
+                return temp;
+            }
+        }
+    }
+    void Delete()
+    {
+        bool flag = 0;
+        auto parent = header;
+        auto T = header->lchild;
+        while (flag != 1)
+        {
+            // Case Delete Leaf Node T->rbit == 0 && T->lbit == 0
+            // Leaf node is rchild
+            if (T == parent->rchild)
+            {
+                parent->rchild = T->rchild;
+                parent->rbit = 0;
+                delete T;
+                flag = 1;
+            }
+            // Leaf Node is lchild
+            else if (T == parent->lchild)
+            {
+                parent->lchild = T->lchild;
+                parent->lbit = 0;
+                delete T;
+                flag = 1;
+            }
+            // Case with Left Child only
+            if (T->lbit == 1 && T->rbit == 0)
+            {
+                parent->rchild = T->lchild;
+                // T's (predecessor)->rchild = T->child 
+            }
+        }
+    }
+};
+
+int main()
+{
+    TBT t1;
+    cout << "BST DICTIONARY CREATION" << endl;
+    t1.Create();
+    cout << endl;
+    cout << endl;
+
+    bool continueProgram = true;
+    while (continueProgram)
+    {
+        cout << "Menu" << endl;
+        cout << "1. Inorder traversal" << endl;
+        cout << "2. Preorder traversal" << endl;
+        cout << "3. Search Element" << endl;
+        cout << "4. Delete Element" << endl;
+        cout << "-1 End" << endl;
+        cout << "Choose operations u want to perform? ";
+        int choice = 0;
+        cin >> choice;
+        cout << endl;
+
+        switch (choice)
+        {
+        case 1:
+        {
+            cout << "Inorder Traversal: ";
+            t1.Inorder();
+            cout << endl;
+            cout << endl;
+            break;
+        }
+        case 2:
+        {
+            cout << "Preorder Traversal: ";
+            t1.Preorder();
+            cout << endl;
+            cout << endl;
+            break;
+        }
+        case 3:
+        {
+            string key;
+            cout << "Enter Element to be Searched: ";
+            cin >> key;
+            t1.Search(key);
+            break;
+        }
+        case 4:
+        {
+            string key;
+            cout << "Enter the element you want to Delete: ";
+            cin >> key;
+            auto result = t1.Search(key);
+            if (result != nullptr)
+            {
+                t1.Delete();
+            }
+            else
+            {
+                cout << "Cannot Delete element which does not exist";
+            }
+            break;
+        }
+        case -1:
+        {
+            continueProgram = false;
+            break;
+        }
+        default:
+        {
+            cout << "INVALID CHOICE" << endl;
+            break;
+        }
+            cout << endl;
+        }
+    }
+    return 0;
 }
