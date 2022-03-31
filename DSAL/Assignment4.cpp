@@ -131,15 +131,15 @@ public:
 };
 
 int main() {
-	HashTable t1;
+	HashTable withReplacement;
+	HashTable withoutReplacement;
 	bool continueProgram = true;
 	while (continueProgram) {
 		cout << "Menu" << endl;
 		cout << "1. Add Hash entry" << endl;
-		cout << "2. Add Hash entry with replacement" << endl;
-		cout << "3. Search Key" << endl;
-		cout << "4. Update Value" << endl;
-		cout << "5. Display" << endl;
+		cout << "2. Search Key" << endl;
+		cout << "3. Update Value" << endl;
+		cout << "4. Display" << endl;
 		cout << "-1 End" << endl;
 		cout << "Choose operations u want to perform? ";
 		int choice = 0;
@@ -156,41 +156,51 @@ int main() {
 			cin.ignore();
 			cin.clear();
 			getline(cin, value);
-			t1.Insert(key, value);
+			withReplacement.InsertWithReplacement(key, value);
+			withoutReplacement.Insert(key, value);
 			cout << endl;
 			break;
 		}
+//		case 2: {
+//			cout << "Enter key: ";
+//			long int key;
+//			cin >> key;
+//			cout << "Enter value: ";
+//			string value = "";
+//			cin.ignore();
+//			cin.clear();
+//			getline(cin, value);
+//			withReplacement.InsertWithReplacement(key, value);
+//			cout << endl;
+//			break;
+//		}
 		case 2: {
 			cout << "Enter key: ";
 			long int key;
 			cin >> key;
-			cout << "Enter value: ";
-			string value = "";
-			cin.ignore();
-			cin.clear();
-			getline(cin, value);
-			t1.InsertWithReplacement(key, value);
-			cout << endl;
+			cout << "With Replacement Search " << endl;
+			withReplacement.Search(key);
+			cout << "Without Replacement Search" << endl;
+			withoutReplacement.Search(key);
 			break;
 		}
 		case 3: {
 			cout << "Enter key: ";
 			long int key;
 			cin >> key;
-			t1.Search(key);
-			break;
-		}
-		case 4: {
-			cout << "Enter key: ";
-			long int key;
-			cin >> key;
-			t1.Update(key);
+			withReplacement.Update(key);
+			withoutReplacement.Update(key);
 			cout << endl;
 			break;
 		}
-		case 5: {
+		case 4: {
+			cout << "Without Replacement Table\n";
 			cout << "Index\tKey\tValue\n";
-			t1.Display();
+			withoutReplacement.Display();
+			cout << endl;
+			cout << "With Replacement Table\n";
+			cout << "Index\tKey\tValue\n";
+			withReplacement.Display();
 			cout << endl;
 			break;
 		}
