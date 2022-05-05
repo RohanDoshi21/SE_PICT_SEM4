@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+#define INT_MAX 2147483647 
 
 class Graph
 {
@@ -33,7 +34,7 @@ public:
             {
                 if (adjMatrix[i][j] != 0)
                 {
-                    cout << i << "-" << j << " W: " << adjMatrix[i][j] << endl;
+                    cout << i << " - " << j << " :  " << adjMatrix[i][j] << endl;
                 }
             }
         }
@@ -52,14 +53,81 @@ public:
             cout << "Enter Weight: ";
             cin >> weight;
             addEdge(source, destination, weight);
+            addEdge(destination, source, weight);
+        }
+    }
+    void Prims()
+    {
+        int edges_no = 0;
+        int selected[Nodes];
+        
+        // initialize all the postions to false initially
+        for (int i = 0; i < Nodes; i++)
+        {
+            selected[i] = false;
+        }
+        // Start from the first element 
+        // so mark the first element to be visited
+        selected[0] = true;
+        int min = INT_MAX;
+        int x = 0;
+        int y = 0;
+
+        // from each edge traverse to all other edges 
+        // E = < V - 1
+        while (edges_no < Nodes - 1)
+        {
+            // Let the min value be the maximum element that is present
+            min = INT_MAX; // holds the min weight
+            x = 0; // row of the MST element that we need to display
+            y = 0; // Column of MST element that we need to display
+
+            // traverse the row
+            for (int i = 0; i < Nodes; i++)
+            {
+                // traverse the column elements only for the vertex that we are visiting
+                if (selected[i])
+                {
+                    // traverse the column
+                    for (int j = 0; j < Nodes; j++)
+                    {
+                        // Select only Non-Zero and Non-Visited element to display
+                        if (!selected[j] && adjMatrix[i][j])
+                        {
+                            // Find out the min element from the column
+                            if (min > adjMatrix[i][j])
+                            {
+                                min = adjMatrix[i][j];
+                                // Store the position of Min Element in X and Y
+                                x = i;
+                                y = j;
+                            }
+                        }
+                    }
+                }
+            }
+            // The Minimum element will be G[X][Y]
+            cout << x << " - " << y << " :  " << adjMatrix[x][y];
+            cout << endl;
+            selected[y] = true;
+            edges_no++;
         }
     }
 };
 
 int main()
 {
-    Graph g1(5, 6);
+    int vertices;
+    int edges;
+    cout << "Enter No of Vertices: ";
+    cin >> vertices;
+    cout << "Enter No of Edges: ";
+    cin >> edges;
+    Graph g1(vertices, edges);
     g1.Create();
+    cout << "\n\nGRAPH" << endl;
     g1.Display();
+    cout << "\n\nMIN SPANNING TREE" << endl;
+    g1.Prims();
     return 0;
 }
