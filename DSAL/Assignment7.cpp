@@ -109,7 +109,11 @@ public:
             // The Minimum element will be G[X][Y]
             cout << x << " - " << y << " :  " << adjMatrix[x][y];
             cout << endl;
+
+            // Make the selected column element to be visited
             selected[y] = true;
+
+            // Increment the edge_no
             edges_no++;
         }
     }
