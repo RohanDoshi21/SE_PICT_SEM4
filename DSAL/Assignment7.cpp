@@ -1,12 +1,13 @@
 #include <iostream>
 using namespace std;
-#define INT_MAX 2147483647 
+#define INT_MAX 2147483647
 
 class Graph
 {
     int adjMatrix[20][20];
     int Nodes;
     int Edges;
+    int weight;
 
     void addEdge(int source, int destination, int weight)
     {
@@ -25,6 +26,7 @@ public:
                 adjMatrix[i][j] = 0;
             }
         }
+        weight = 0;
     }
     void Display()
     {
@@ -60,27 +62,27 @@ public:
     {
         int edges_no = 0;
         int selected[Nodes];
-        
+
         // initialize all the postions to false initially
         for (int i = 0; i < Nodes; i++)
         {
             selected[i] = false;
         }
-        // Start from the first element 
+        // Start from the first element
         // so mark the first element to be visited
         selected[0] = true;
         int min = INT_MAX;
         int x = 0;
         int y = 0;
 
-        // from each edge traverse to all other edges 
+        // from each edge traverse to all other edges
         // E = < V - 1
         while (edges_no < Nodes - 1)
         {
             // Let the min value be the maximum element that is present
             min = INT_MAX; // holds the min weight
-            x = 0; // row of the MST element that we need to display
-            y = 0; // Column of MST element that we need to display
+            x = 0;         // row of the MST element that we need to display
+            y = 0;         // Column of MST element that we need to display
 
             // traverse the row
             for (int i = 0; i < Nodes; i++)
@@ -108,6 +110,7 @@ public:
             }
             // The Minimum element will be G[X][Y]
             cout << x << " - " << y << " :  " << adjMatrix[x][y];
+            weight += adjMatrix[x][y];
             cout << endl;
 
             // Make the selected column element to be visited
@@ -116,6 +119,7 @@ public:
             // Increment the edge_no
             edges_no++;
         }
+        cout << "Weight of minimum spanning tree: " << weight << endl;
     }
 };
 
