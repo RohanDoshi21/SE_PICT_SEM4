@@ -11,6 +11,7 @@ public class Assignment9 {
 
         // Heap Sort
         for (int i = n - 1; i > 0; i--) {
+            // after each iteration largest element present at start
             int temp = arr[0];
             arr[0] = arr[i];
             arr[i] = temp;
