@@ -10,6 +10,10 @@ using namespace std;
 // Delete that element and all the outgoing edges
 // Keep on repeating that process
 
+// I am using Kahn's Algorithm (BFS)
+// Time Complexity -> O(V+E)
+// Space Complexity -> O(V) -> Use of Queue
+
 class Node
 {
 private:
