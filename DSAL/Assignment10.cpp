@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#define file_name "Assignment10.txt"
-#define temp_name "temp10.txt"
+#define file_name "Assignment10.bin"
+#define temp_name "temp10.bin"
 using namespace std;
 
 class Student
@@ -13,7 +13,7 @@ private:
     string division;
 
 public:
-    friend class Database;
+    friend class FileHandling;
     Student()
     {
         name = "";
@@ -28,10 +28,10 @@ public:
         this->division = div;
         this->address = addr;
     }
-    friend class Database;
+    friend class FileHandling;
 };
 
-class Database
+class FileHandling
 {
 public:
     Student std;
@@ -48,7 +48,7 @@ public:
         cout << "Enter address: ";
         cin.ignore();
         getline(cin, std.address);
-        outf.open(file_name, ios::app | ios::binary);
+        outf.open(file_name, ios::binary | ios::app);
         outf.write((char *)&std, sizeof(std)) << flush;
         outf.close();
         cout << "\nSuccessfully added";
@@ -73,6 +73,8 @@ public:
             if (std.name != name)
                 fout.write((char *)&std, sizeof(std)) << flush;
         }
+        fin.close();
+        fout.close();
         remove(file_name);
         rename(temp_name, file_name);
         cout << (flag ? "\nDeletion Success" : "\nCould not Record");
@@ -115,16 +117,15 @@ public:
     {
         ifstream fin;
         fin.open(file_name, ios::in | ios::binary);
+        fin.seekg(ios::beg);
         if (fin.is_open())
         {
             int i = 1;
+            cout << "Name\tRollNo\tDivision\tAddress\n";
             while (fin.read((char *)&std, sizeof(std)))
             {
-                cout << "Student-" << (i++) << endl;
-                cout << "\nName: " << std.name;
-                cout << "\nRoll number: " << std.rollNum;
-                cout << "\nDivision: " << std.division;
-                cout << "\nAddress: " << std.address;
+                i++;
+                cout << std.name << "\t" << std.rollNum << "\t" << std.division << "\t" << std.address << endl;
                 cout << endl;
             }
             fin.close();
@@ -137,11 +138,12 @@ public:
 int main()
 {
     bool menu = 1;
-    file = new Database();
+    file = new FileHandling();
     while (menu)
     {
         int ch;
-        cout << "\n\n1. Insert Record\n2. Search Record\n3. Delete Record\n4. Display Entire File Contents\n What do you want to perform: ";
+        cout << "\n\n**********MENU**********";
+        cout << "\n1. Insert Record\n2. Search Record\n3. Delete Record\n4. Display Entire File Contents\n-1. Exit\n What do you want to perform: ";
         cin >> ch;
         switch (ch)
         {
@@ -161,6 +163,9 @@ int main()
             file->Display();
             break;
 
+        case -1:
+            menu = 0;
+            break;
         default:
             break;
         }
