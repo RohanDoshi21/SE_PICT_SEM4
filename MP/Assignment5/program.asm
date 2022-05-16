@@ -1,68 +1,69 @@
-section .data
-str1: db "The greatest number in array is : ", 0xA
-len1: equ $- str1
-
-block dq 0xF123456701234568, 0xF123456701234567, 0xF123456701234569, 0xF123456701234564
-
-count db 04h
-cnt: db 0h
-
-greatest: dq 0x0000000000000000	;initialize the greatest number to be the smallest 64 bit hex number
-
-section .bss
-result: resb 0
-
 %macro print 2
-mov rax, 1
-mov rdi, 1
-mov rsi, %1
-mov rdx, %2
-syscall
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
 %endmacro
 
+section .data
+    array: dq 08h, 2320h, 102h, 65h, 98h
+    n: equ 5
+
+    msg: db "The Greatest Number is: "
+    len: equ $-msg
+
+    largest: dq 00
+
+section .bss
+    result: resb 16
+    count: resb 1
+    asciiarr resb 02
+
 section .text
-global _start
+    global _start
 
 _start:
+    mov rsi, array
+    mov rcx, n
 
-mov rsi, block        ; set rsi to point to block
+up: 
+    mov rax, [rsi]
+    cmp [largest], rax
+    jge down1
+    mov [largest], rax
 
-mainloop:
-mov rax, qword[rsi]   ; get the block number into rax
-CMP rax, qword[greatest]
-JBE down
-mov qword[greatest], rax
+down1:
+    add rsi, 08
+    dec rcx
+    jnz up
 
-down:
-add rsi, 08h          ; add 8 to get to next number
-dec byte[count]
-jnz mainloop
+    print msg, len
+    mov rdx, [largest]
+    mov [result], rdx
+    call hextoascii
 
-; Convert the hex number to display on screen
+    mov rax,60
+    mov rdi,00
+    syscall
 
-mov rax, qword[greatest]
-mov byte[cnt], 0x10
-mov rsi, result
-
-l1:
-rol rax, 4
-mov bl, al
-and bl, 0x0F
-cmp bl, 0x09
-jbe l2
-add bl, 07h
-
-l2:
-add bl, 30h
-mov [rsi], bl
-inc rsi
-dec byte[cnt]
-jnz l1
-
-print str1, len1
-print result, 16
-
-
-mov rax, 60
-mov rdi, 00
-syscall
+hextoascii:
+    mov rsi,asciiarr
+    mov byte[count],0x10
+    mov rax, [result]
+down:    
+    rol rax,04h
+    mov bl,al
+    and bl,0fh
+    cmp bl,09h
+    jbe next
+    add bl,07h
+	
+next:      
+    add bl,30h
+    mov [rsi],bl
+    inc rsi
+    dec byte[count]
+    jnz down
+    print asciiarr,16
+    ret
