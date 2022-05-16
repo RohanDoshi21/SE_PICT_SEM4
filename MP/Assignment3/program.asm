@@ -1,53 +1,69 @@
 section .data
-str1: db "No of positive numbers are: ", 0x9
-len1: equ $- str1
-str2: db 0xA
+    array dq -1h, -74h, 24h, -3h, -50h
+    n equ 5
 
-block dq 0x0123456701234567, 0xF123456701234567, 0xF123456701234567, 0xF123456701234567
-count db 4
+    p_msg db "No of positive Elements is: "
+    p_len equ $-p_msg
+    
+    n_msg db "No of negative Elements is: "
+    n_len equ $-n_msg
+
+%macro print 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro exit 0
+    mov rax, 60
+    mov rdi, 0
+    syscall
+%endmacro
 
 section .bss
-result: resb 200
+    p_count: resb 20
+    n_count: resb 20
 
 section .text
 global _start
 
-_start:
+_start: 
+    mov rsi, array
+    mov rcx, n
 
-mov bl, 00
-mov rsi, block
+    mov rbx, 0   ; positive count
+    mov rdx, 0   ; negative count
 
-loop:
-mov rax, qword[rsi]
-bt rax, 63
-jc label
-inc bl
+back:
+    mov rax, [rsi]
+    shl rax, 1
+    jc negative
 
-label:
-add rsi, 08h          ; Add 8 to go to the next number
-dec byte[count]
-jnz loop
+positive:
+    inc rbx
+    jmp next
 
-mov rax, 1
-mov rdi, 1
-mov rsi, str1
-mov rdx, len1
-syscall
+negative:
+    inc rdx
 
-add bl,0x30           ; Convert hex to decimal to display
-mov [result], bl
-mov rax, 1
-mov rdi, 1
-mov rsi, result
-mov rdx, 16
-syscall
+next:
+    add rsi, 8
+    dec rcx
+    jnz back
 
-mov rax, 1
-mov rdi, 1
-mov rsi, str2
-mov rdx, 1
-syscall
+    add rbx, 30h
+    add rdx, 30h
 
-mov rax, 60
-mov rdi, 00
-syscall
+    mov [p_count], rbx
+    mov [n_count], rdx
+    
+    print p_msg, p_len
+    print p_count, 20
+
+    print n_msg, n_len
+    print n_count, 20
+
+    exit
+
