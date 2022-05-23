@@ -96,11 +96,13 @@ next:
     call HtoA
 
 
+    STR [tr]
     print tr_msg, tr_msg_len
     mov bx, word[tr]
     call HtoA   
 
 
+    SMSW [msw]
     print msw_msg, msw_msg_len
     mov bx, word[msw+2]
     call HtoA
